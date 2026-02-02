@@ -337,6 +337,10 @@
                         <span class="info-label">Shadow Angle from Vertical:</span>
                         <span class="info-value" id="infoShadowAngle">6.5°</span>
                     </div>
+                    <div class="info-row">
+                        <span class="info-label">Sunset Time (equinoctial hours):</span>
+                        <span class="info-value" id="infoSunsetTime">18.0h</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -369,6 +373,36 @@
             // But we need to be more careful about the geometry
             const zenithAngle = Math.abs(latitude - sunDeclination);
             return 90 - zenithAngle;
+        }
+
+        // Calculate sunset time in equinoctial hours (hours from midnight)
+        function calculateSunsetTime(latitude, sunDeclination) {
+            // Convert to radians
+            const latRad = latitude * Math.PI / 180;
+            const decRad = sunDeclination * Math.PI / 180;
+
+            // Calculate hour angle at sunset: cos(H) = -tan(lat) * tan(dec)
+            const cosH = -Math.tan(latRad) * Math.tan(decRad);
+
+            // Check if sun sets (if |cosH| > 1, sun doesn't set or doesn't rise)
+            if (cosH < -1) {
+                // Sun never sets (polar day)
+                return null;
+            } else if (cosH > 1) {
+                // Sun never rises (polar night)
+                return null;
+            }
+
+            // Hour angle at sunset in radians
+            const H = Math.acos(cosH);
+
+            // Convert to hours from noon (H is in radians, π radians = 12 hours)
+            const hoursFromNoon = H * 12 / Math.PI;
+
+            // Sunset time in equinoctial hours from midnight
+            const sunsetTime = 12 + hoursFromNoon;
+
+            return sunsetTime;
         }
 
         // Draw Earth diagram
@@ -713,6 +747,14 @@
                 document.getElementById('infoSunElev').textContent = 'Below horizon';
                 document.getElementById('infoShadowLen').textContent = 'N/A';
                 document.getElementById('infoShadowAngle').textContent = 'N/A';
+            }
+
+            // Calculate and display sunset time
+            const sunsetTime = calculateSunsetTime(observerLatitude, sunDeclination);
+            if (sunsetTime !== null) {
+                document.getElementById('infoSunsetTime').textContent = `${sunsetTime.toFixed(2)}h`;
+            } else {
+                document.getElementById('infoSunsetTime').textContent = 'N/A';
             }
         }
 
