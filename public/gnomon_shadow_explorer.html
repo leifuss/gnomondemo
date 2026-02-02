@@ -338,8 +338,12 @@
                         <span class="info-value" id="infoShadowAngle">6.5°</span>
                     </div>
                     <div class="info-row">
+                        <span class="info-label">Sunrise Time (equinoctial hours):</span>
+                        <span class="info-value" id="infoSunriseTime">06:00</span>
+                    </div>
+                    <div class="info-row">
                         <span class="info-label">Sunset Time (equinoctial hours):</span>
-                        <span class="info-value" id="infoSunsetTime">18.0h</span>
+                        <span class="info-value" id="infoSunsetTime">18:00</span>
                     </div>
                 </div>
             </div>
@@ -375,6 +379,36 @@
             return 90 - zenithAngle;
         }
 
+        // Calculate sunrise time in equinoctial hours (hours from midnight)
+        function calculateSunriseTime(latitude, sunDeclination) {
+            // Convert to radians
+            const latRad = latitude * Math.PI / 180;
+            const decRad = sunDeclination * Math.PI / 180;
+
+            // Calculate hour angle at sunrise: cos(H) = -tan(lat) * tan(dec)
+            const cosH = -Math.tan(latRad) * Math.tan(decRad);
+
+            // Check if sun rises (if |cosH| > 1, sun doesn't set or doesn't rise)
+            if (cosH < -1) {
+                // Sun never sets (polar day)
+                return null;
+            } else if (cosH > 1) {
+                // Sun never rises (polar night)
+                return null;
+            }
+
+            // Hour angle at sunrise in radians
+            const H = Math.acos(cosH);
+
+            // Convert to hours from noon (H is in radians, π radians = 12 hours)
+            const hoursFromNoon = H * 12 / Math.PI;
+
+            // Sunrise time in equinoctial hours from midnight
+            const sunriseTime = 12 - hoursFromNoon;
+
+            return sunriseTime;
+        }
+
         // Calculate sunset time in equinoctial hours (hours from midnight)
         function calculateSunsetTime(latitude, sunDeclination) {
             // Convert to radians
@@ -403,6 +437,14 @@
             const sunsetTime = 12 + hoursFromNoon;
 
             return sunsetTime;
+        }
+
+        // Convert decimal hours to HH:MM format
+        function formatTime(decimalHours) {
+            if (decimalHours === null) return 'N/A';
+            const hours = Math.floor(decimalHours);
+            const minutes = Math.round((decimalHours - hours) * 60);
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
         }
 
         // Draw Earth diagram
@@ -749,13 +791,12 @@
                 document.getElementById('infoShadowAngle').textContent = 'N/A';
             }
 
-            // Calculate and display sunset time
+            // Calculate and display sunrise and sunset times
+            const sunriseTime = calculateSunriseTime(observerLatitude, sunDeclination);
             const sunsetTime = calculateSunsetTime(observerLatitude, sunDeclination);
-            if (sunsetTime !== null) {
-                document.getElementById('infoSunsetTime').textContent = `${sunsetTime.toFixed(2)}h`;
-            } else {
-                document.getElementById('infoSunsetTime').textContent = 'N/A';
-            }
+
+            document.getElementById('infoSunriseTime').textContent = formatTime(sunriseTime);
+            document.getElementById('infoSunsetTime').textContent = formatTime(sunsetTime);
         }
 
         // Update displays
