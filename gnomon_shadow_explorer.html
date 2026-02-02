@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gnomon Shadow Explorer - Greek Mathematical Geography</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .instructions {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .instructions h2 {
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .instructions p {
+            line-height: 1.6;
+            color: #4a5568;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .panel h3 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            background: #edf2f7;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: #cbd5e0;
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .value-display {
+            text-align: center;
+            font-size: 1.1em;
+            color: #667eea;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .radio-option:hover {
+            background: #e6fffa;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            margin: 0;
+            font-weight: normal;
+        }
+
+        .info-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .info-value {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+        }
+
+        .legend-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #4a5568;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 15px;
+            margin-right: 10px;
+            border-radius: 3px;
+        }
+
+        .legend-text {
+            font-size: 0.9em;
+            color: #4a5568;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gnomon Shadow Explorer</h1>
+        <p class="subtitle">Understanding Ancient Greek Mathematical Geography</p>
+
+        <div class="instructions">
+            <h2>Instructions</h2>
+            <p>
+                This tool demonstrates how ancient Greeks used shadow measurements to determine latitude.
+                Select a sun position (solstice or equinox), then move the observer along Earth's surface.
+                Watch how the gnomon shadow changes based on the observer's latitude and the sun's position.
+            </p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Sun Position:</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="summer" name="season" value="summer" checked>
+                        <label for="summer">Summer Solstice (sun at Tropic of Cancer, 23.5°N)</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="equinox" name="season" value="equinox">
+                        <label for="equinox">Spring/Autumn Equinox (sun at Equator, 0°)</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="winter" name="season" value="winter">
+                        <label for="winter">Winter Solstice (sun at Tropic of Capricorn, 23.5°S)</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="latitude">Observer Latitude:</label>
+                <input type="range" id="latitude" min="0" max="90" value="30" step="1" style="direction: rtl;">
+                <div class="value-display" id="latitudeValue">30°N</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="panel">
+                <h3>Earth and Sun</h3>
+                <canvas id="earthCanvas" width="500" height="500"></canvas>
+                <div class="legend">
+                    <div class="legend-title">Key Lines:</div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e53e3e;"></div>
+                        <div class="legend-text">Equator (0°)</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #dd6b20;"></div>
+                        <div class="legend-text">Tropics (±23.5°)</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #3182ce;"></div>
+                        <div class="legend-text">Arctic/Antarctic Circles (±66.5°)</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #667eea;"></div>
+                        <div class="legend-text">Observer Position</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>Gnomon and Shadow (1m stick)</h3>
+                <canvas id="gnomonCanvas" width="500" height="500"></canvas>
+
+                <div class="info-panel" style="margin-top: 20px;">
+                    <div class="info-row">
+                        <span class="info-label">Observer Latitude:</span>
+                        <span class="info-value" id="infoLatitude">30°N</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Sun Declination:</span>
+                        <span class="info-value" id="infoSunDec">23.5°N</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Sun Elevation (noon):</span>
+                        <span class="info-value" id="infoSunElev">83.5°</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Shadow Length:</span>
+                        <span class="info-value" id="infoShadowLen">0.11 m</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Shadow Angle from Vertical:</span>
+                        <span class="info-value" id="infoShadowAngle">6.5°</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Canvas references
+        const earthCanvas = document.getElementById('earthCanvas');
+        const earthCtx = earthCanvas.getContext('2d');
+        const gnomonCanvas = document.getElementById('gnomonCanvas');
+        const gnomonCtx = gnomonCanvas.getContext('2d');
+
+        // State
+        let observerLatitude = 30; // degrees
+        let sunPosition = 'summer'; // summer, equinox, winter
+
+        // Get sun declination based on position
+        function getSunDeclination() {
+            switch(sunPosition) {
+                case 'summer': return 23.5;
+                case 'winter': return -23.5;
+                case 'equinox': return 0;
+                default: return 0;
+            }
+        }
+
+        // Calculate sun elevation at local noon
+        function calculateSunElevation(latitude, sunDeclination) {
+            // At local noon, sun elevation = 90° - |latitude - sunDeclination|
+            // But we need to be more careful about the geometry
+            const zenithAngle = Math.abs(latitude - sunDeclination);
+            return 90 - zenithAngle;
+        }
+
+        // Draw Earth diagram
+        function drawEarth() {
+            const centerX = earthCanvas.width / 2;
+            const centerY = earthCanvas.height / 2;
+            const radius = 180;
+
+            // Clear canvas
+            earthCtx.clearRect(0, 0, earthCanvas.width, earthCanvas.height);
+
+            // Draw Earth
+            earthCtx.beginPath();
+            earthCtx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            earthCtx.fillStyle = '#e6f7ff';
+            earthCtx.fill();
+            earthCtx.strokeStyle = '#333';
+            earthCtx.lineWidth = 2;
+            earthCtx.stroke();
+
+            // Draw latitude lines
+            drawLatitudeLine(0, '#e53e3e', 2, centerX, centerY, radius); // Equator
+            drawLatitudeLine(23.5, '#dd6b20', 1.5, centerX, centerY, radius); // Tropic of Cancer
+            drawLatitudeLine(-23.5, '#dd6b20', 1.5, centerX, centerY, radius); // Tropic of Capricorn
+            drawLatitudeLine(66.5, '#3182ce', 1.5, centerX, centerY, radius); // Arctic Circle
+            drawLatitudeLine(-66.5, '#3182ce', 1.5, centerX, centerY, radius); // Antarctic Circle
+
+            // Draw poles
+            earthCtx.fillStyle = '#333';
+            earthCtx.font = '12px Georgia';
+            earthCtx.textAlign = 'center';
+            earthCtx.fillText('N', centerX, centerY - radius - 10);
+            earthCtx.fillText('S', centerX, centerY + radius + 20);
+
+            // Draw "oikoumene" label in northern hemisphere
+            earthCtx.fillStyle = '#666';
+            earthCtx.font = 'italic 14px Georgia';
+            earthCtx.textAlign = 'center';
+            earthCtx.fillText('οἰκουμένη', centerX, centerY - radius * 0.5);
+
+            // Draw observer position (on the surface of the sphere)
+            // Observer moves along the arc from equator (right side) to north pole (top)
+            // At 0° lat: angle is 0° (right), at 90° lat: angle is 90° (up)
+            const latRad = observerLatitude * Math.PI / 180;
+            const observerX = centerX + radius * Math.cos(latRad);
+            const observerY = centerY - radius * Math.sin(latRad);
+            earthCtx.beginPath();
+            earthCtx.arc(observerX, observerY, 8, 0, 2 * Math.PI);
+            earthCtx.fillStyle = '#667eea';
+            earthCtx.fill();
+            earthCtx.strokeStyle = '#fff';
+            earthCtx.lineWidth = 2;
+            earthCtx.stroke();
+
+            // Draw sun
+            const sunDeclination = getSunDeclination();
+            const sunY = centerY - (sunDeclination / 90) * radius;
+            const sunX = centerX + radius + 150;
+
+            // Sun rays
+            earthCtx.strokeStyle = '#fbbf24';
+            earthCtx.lineWidth = 2;
+            for (let i = 0; i < 8; i++) {
+                const angle = (i / 8) * 2 * Math.PI;
+                earthCtx.beginPath();
+                earthCtx.moveTo(sunX + Math.cos(angle) * 25, sunY + Math.sin(angle) * 25);
+                earthCtx.lineTo(sunX + Math.cos(angle) * 35, sunY + Math.sin(angle) * 35);
+                earthCtx.stroke();
+            }
+
+            // Sun circle
+            earthCtx.beginPath();
+            earthCtx.arc(sunX, sunY, 20, 0, 2 * Math.PI);
+            earthCtx.fillStyle = '#fbbf24';
+            earthCtx.fill();
+
+            // Draw multiple parallel light rays from sun
+            const numRays = 7;
+            const rayLength = 100;
+            earthCtx.strokeStyle = '#fcd34d';
+            earthCtx.lineWidth = 2;
+
+            // Spread rays across full height of Earth (from top to bottom)
+            const earthTop = centerY - radius;
+            const earthBottom = centerY + radius;
+            const rayStartX = sunX - 20;
+
+            // Calculate the angle for ALL rays based on sun's declination
+            // Sun declination determines the angle: positive (summer) = downward angle, negative (winter) = upward angle
+            const rayAngle = (sunDeclination / 90) * (Math.PI / 4); // Scale to reasonable visual angle
+
+            for (let i = 0; i < numRays; i++) {
+                const rayStartY = earthTop + (i / (numRays - 1)) * (earthBottom - earthTop);
+
+                // All rays have the SAME angle (parallel)
+                const rayEndX = rayStartX - rayLength;
+                const rayEndY = rayStartY + rayLength * Math.tan(rayAngle);
+
+                earthCtx.beginPath();
+                earthCtx.moveTo(rayStartX, rayStartY);
+                earthCtx.lineTo(rayEndX, rayEndY);
+                earthCtx.stroke();
+
+                // Draw arrowhead pointing in the direction of travel (from right to left)
+                const arrowAngle = Math.atan2(rayEndY - rayStartY, rayEndX - rayStartX);
+                earthCtx.fillStyle = '#fcd34d';
+                earthCtx.save();
+                earthCtx.translate(rayEndX, rayEndY);
+                earthCtx.rotate(arrowAngle + Math.PI); // Add PI to reverse the arrowhead direction
+                earthCtx.beginPath();
+                earthCtx.moveTo(0, 0);
+                earthCtx.lineTo(10, -5);
+                earthCtx.lineTo(10, 5);
+                earthCtx.closePath();
+                earthCtx.fill();
+                earthCtx.restore();
+            }
+        }
+
+        // Helper to draw latitude line
+        function drawLatitudeLine(latitude, color, lineWidth, centerX, centerY, radius) {
+            // Use sine to properly project latitude onto the sphere
+            const latRad = latitude * Math.PI / 180;
+            const y = centerY - radius * Math.sin(latRad);
+            const width = Math.sqrt(radius * radius - Math.pow(radius * Math.sin(latRad), 2));
+
+            earthCtx.beginPath();
+            earthCtx.moveTo(centerX - width, y);
+            earthCtx.lineTo(centerX + width, y);
+            earthCtx.strokeStyle = color;
+            earthCtx.lineWidth = lineWidth;
+            earthCtx.stroke();
+        }
+
+        // Draw gnomon and shadow
+        function drawGnomon() {
+            const centerX = gnomonCanvas.width / 2;
+            const baseY = gnomonCanvas.height - 100;
+            const gnomonHeight = 200; // pixels for 1m gnomon
+
+            // Clear canvas
+            gnomonCtx.clearRect(0, 0, gnomonCanvas.width, gnomonCanvas.height);
+
+            // Calculate sun elevation
+            const sunDeclination = getSunDeclination();
+            const sunElevation = calculateSunElevation(observerLatitude, sunDeclination);
+
+            // Calculate shadow
+            let shadowLength = 0;
+            let shadowAngle = 0;
+
+            if (sunElevation > 0) {
+                shadowAngle = 90 - sunElevation;
+                shadowLength = Math.tan(shadowAngle * Math.PI / 180);
+            } else {
+                // Sun below horizon
+                shadowLength = null;
+            }
+
+            // Draw ground
+            gnomonCtx.fillStyle = '#e8dcc8';
+            gnomonCtx.fillRect(0, baseY, gnomonCanvas.width, gnomonCanvas.height - baseY);
+
+            // Draw sky
+            gnomonCtx.fillStyle = '#e3f2fd';
+            gnomonCtx.fillRect(0, 0, gnomonCanvas.width, baseY);
+
+            // Draw compass labels (North on left, South on right)
+            gnomonCtx.fillStyle = '#333';
+            gnomonCtx.font = 'bold 16px Georgia';
+            gnomonCtx.textAlign = 'center';
+            gnomonCtx.fillText('N', 50, baseY + 30);
+            gnomonCtx.fillText('S', gnomonCanvas.width - 50, baseY + 30);
+
+            if (shadowLength !== null && sunElevation > 0) {
+                // Draw shadow (to the north if sun is south of observer, to the south if sun is north)
+                // Shadow points away from the sun: if sun is south (right), shadow points north (left)
+                const shadowDirection = sunDeclination < observerLatitude ? -1 : 1;
+                const shadowPixels = shadowLength * gnomonHeight;
+
+                // Draw shadow triangle
+                gnomonCtx.fillStyle = 'rgba(180, 180, 180, 0.5)';
+                gnomonCtx.beginPath();
+                gnomonCtx.moveTo(centerX, baseY - gnomonHeight);  // Top of gnomon
+                gnomonCtx.lineTo(centerX + shadowDirection * shadowPixels, baseY);  // End of shadow
+                gnomonCtx.lineTo(centerX, baseY);  // Base of gnomon
+                gnomonCtx.closePath();
+                gnomonCtx.fill();
+
+                // Draw shadow on ground
+                gnomonCtx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                gnomonCtx.beginPath();
+                gnomonCtx.moveTo(centerX, baseY);
+                gnomonCtx.lineTo(centerX + shadowDirection * shadowPixels, baseY);
+                gnomonCtx.lineTo(centerX + shadowDirection * shadowPixels, baseY + 5);
+                gnomonCtx.lineTo(centerX, baseY + 5);
+                gnomonCtx.fill();
+
+                // Draw shadow length annotation
+                gnomonCtx.strokeStyle = '#e53e3e';
+                gnomonCtx.lineWidth = 2;
+                gnomonCtx.beginPath();
+                gnomonCtx.moveTo(centerX, baseY + 20);
+                gnomonCtx.lineTo(centerX + shadowDirection * shadowPixels, baseY + 20);
+                gnomonCtx.stroke();
+
+                // Arrow heads
+                gnomonCtx.beginPath();
+                gnomonCtx.moveTo(centerX, baseY + 20);
+                gnomonCtx.lineTo(centerX + shadowDirection * 10, baseY + 15);
+                gnomonCtx.lineTo(centerX + shadowDirection * 10, baseY + 25);
+                gnomonCtx.closePath();
+                gnomonCtx.fill();
+
+                gnomonCtx.beginPath();
+                gnomonCtx.moveTo(centerX + shadowDirection * shadowPixels, baseY + 20);
+                gnomonCtx.lineTo(centerX + shadowDirection * (shadowPixels - 10), baseY + 15);
+                gnomonCtx.lineTo(centerX + shadowDirection * (shadowPixels - 10), baseY + 25);
+                gnomonCtx.closePath();
+                gnomonCtx.fill();
+
+                gnomonCtx.fillStyle = '#e53e3e';
+                gnomonCtx.font = 'bold 14px Georgia';
+                gnomonCtx.textAlign = 'center';
+                gnomonCtx.fillText(`${shadowLength.toFixed(2)} m`, centerX + shadowDirection * shadowPixels / 2, baseY + 45);
+            }
+
+            // Draw gnomon
+            gnomonCtx.strokeStyle = '#654321';
+            gnomonCtx.lineWidth = 8;
+            gnomonCtx.beginPath();
+            gnomonCtx.moveTo(centerX, baseY);
+            gnomonCtx.lineTo(centerX, baseY - gnomonHeight);
+            gnomonCtx.stroke();
+
+            // Draw gnomon height annotation
+            gnomonCtx.strokeStyle = '#3182ce';
+            gnomonCtx.lineWidth = 2;
+            gnomonCtx.beginPath();
+            gnomonCtx.moveTo(centerX + 20, baseY);
+            gnomonCtx.lineTo(centerX + 20, baseY - gnomonHeight);
+            gnomonCtx.stroke();
+
+            // Arrow heads
+            gnomonCtx.fillStyle = '#3182ce';
+            gnomonCtx.beginPath();
+            gnomonCtx.moveTo(centerX + 20, baseY);
+            gnomonCtx.lineTo(centerX + 15, baseY - 10);
+            gnomonCtx.lineTo(centerX + 25, baseY - 10);
+            gnomonCtx.closePath();
+            gnomonCtx.fill();
+
+            gnomonCtx.beginPath();
+            gnomonCtx.moveTo(centerX + 20, baseY - gnomonHeight);
+            gnomonCtx.lineTo(centerX + 15, baseY - gnomonHeight + 10);
+            gnomonCtx.lineTo(centerX + 25, baseY - gnomonHeight + 10);
+            gnomonCtx.closePath();
+            gnomonCtx.fill();
+
+            gnomonCtx.font = 'bold 14px Georgia';
+            gnomonCtx.textAlign = 'left';
+            gnomonCtx.fillText('1.0 m', centerX + 30, baseY - gnomonHeight / 2);
+
+            // Draw sun ray
+            if (sunElevation > 0) {
+                const rayLength = 150;
+                // Reverse the sun position: if sun is south of observer, show it on right (south side)
+                const sunIsNorth = sunDeclination > observerLatitude;
+                const horizontalDir = sunIsNorth ? -1 : 1; // 1 = right (south), -1 = left (north)
+                const rayEndX = centerX + horizontalDir * rayLength * Math.cos(sunElevation * Math.PI / 180);
+                const rayEndY = baseY - gnomonHeight - rayLength * Math.sin(sunElevation * Math.PI / 180);
+
+                gnomonCtx.strokeStyle = '#fbbf24';
+                gnomonCtx.lineWidth = 3;
+                gnomonCtx.setLineDash([5, 5]);
+                gnomonCtx.beginPath();
+                gnomonCtx.moveTo(centerX, baseY - gnomonHeight);
+                gnomonCtx.lineTo(rayEndX, rayEndY);
+                gnomonCtx.stroke();
+                gnomonCtx.setLineDash([]);
+
+                // Draw sun
+                gnomonCtx.beginPath();
+                gnomonCtx.arc(rayEndX, rayEndY, 15, 0, 2 * Math.PI);
+                gnomonCtx.fillStyle = '#fbbf24';
+                gnomonCtx.fill();
+
+                // Draw angle arc - from vertical to the sun ray
+                gnomonCtx.strokeStyle = '#38a169';
+                gnomonCtx.lineWidth = 2;
+                gnomonCtx.beginPath();
+                const sunRayAngle = Math.atan2(rayEndY - (baseY - gnomonHeight), rayEndX - centerX);
+                const verticalAngle = -Math.PI / 2;
+
+                // Always draw the shorter arc between vertical and sun
+                if (sunRayAngle > verticalAngle) {
+                    // Sun to the right (south) - draw clockwise from vertical to sun
+                    gnomonCtx.arc(centerX, baseY - gnomonHeight, 40, verticalAngle, sunRayAngle);
+                } else {
+                    // Sun to the left (north) - draw counterclockwise from vertical to sun
+                    gnomonCtx.arc(centerX, baseY - gnomonHeight, 40, sunRayAngle, verticalAngle);
+                }
+                gnomonCtx.stroke();
+
+                // Position the angle label appropriately based on which side sun is on
+                const labelOffsetX = horizontalDir * -60;
+                const labelOffsetY = -35;
+                gnomonCtx.fillStyle = '#38a169';
+                gnomonCtx.font = 'bold 12px Georgia';
+                gnomonCtx.textAlign = 'center';
+                // Display angle from vertical (zenith angle), not from horizon
+                const angleFromVertical = 90 - sunElevation;
+                gnomonCtx.fillText(`${angleFromVertical.toFixed(1)}°`, centerX + labelOffsetX, baseY - gnomonHeight + labelOffsetY);
+            } else {
+                // Sun below horizon
+                gnomonCtx.fillStyle = '#e53e3e';
+                gnomonCtx.font = 'bold 16px Georgia';
+                gnomonCtx.textAlign = 'center';
+                gnomonCtx.fillText('Sun below horizon at noon', centerX, 50);
+            }
+
+            // Update info panel
+            updateInfo(sunElevation, shadowLength, shadowAngle);
+        }
+
+        // Update info panel
+        function updateInfo(sunElevation, shadowLength, shadowAngle) {
+            const sunDeclination = getSunDeclination();
+
+            document.getElementById('infoLatitude').textContent =
+                `${Math.abs(observerLatitude).toFixed(1)}°${observerLatitude >= 0 ? 'N' : 'S'}`;
+
+            document.getElementById('infoSunDec').textContent =
+                `${Math.abs(sunDeclination).toFixed(1)}°${sunDeclination >= 0 ? 'N' : 'S'}`;
+
+            if (sunElevation > 0) {
+                document.getElementById('infoSunElev').textContent = `${sunElevation.toFixed(1)}°`;
+                document.getElementById('infoShadowLen').textContent =
+                    shadowLength !== null ? `${shadowLength.toFixed(2)} m` : 'No shadow';
+                document.getElementById('infoShadowAngle').textContent = `${shadowAngle.toFixed(1)}°`;
+            } else {
+                document.getElementById('infoSunElev').textContent = 'Below horizon';
+                document.getElementById('infoShadowLen').textContent = 'N/A';
+                document.getElementById('infoShadowAngle').textContent = 'N/A';
+            }
+        }
+
+        // Update displays
+        function updateDisplay() {
+            drawEarth();
+            drawGnomon();
+        }
+
+        // Event listeners
+        document.getElementById('latitude').addEventListener('input', (e) => {
+            observerLatitude = parseFloat(e.target.value);
+            const display = `${Math.abs(observerLatitude).toFixed(0)}°${observerLatitude >= 0 ? 'N' : 'S'}`;
+            document.getElementById('latitudeValue').textContent = display;
+            updateDisplay();
+        });
+
+        document.querySelectorAll('input[name="season"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                sunPosition = e.target.value;
+                updateDisplay();
+            });
+        });
+
+        // Initial draw
+        updateDisplay();
+    </script>
+</body>
+</html>
